@@ -54,71 +54,56 @@ import time
 # 문제 3
 def add_large_arrays():
     N = 10**6  # 100만 개 요소
-    # 배열열 실행 시간 측정 시작
-    array_start_time = time.time()
-    
-    # 랜덤한 1차원 배열 2개 생성
-    array1 = [random.randint(0, 100) for _ in range(N)]
-    array2 = [random.randint(0, 100) for _ in range(N)]
-    # random.choice 로 바꿔서 속도 비교
-    
-    # numpy 이용 속도 비교
-    #array1 = np.random.randint(0, 100, size=N)
-    #array2 = np.random.randint(0, 100, size=N)
-
-    # 배열 실행 시간 측정 종료료
-    array_end_time = time.time()
-    
-    # 연산 실행 시간 측정 시작
-    add_start_time = time.time()
-    
-    # 요소별 덧셈
-    result = []
-    for i in range(N):
-        result.append(array1[i] + array2[i])
-    #result = array1 + array2
-
-    # 연산 실행 시간 측정 종료
-    add_end_time = time.time()
-    
-    # 수행 시간 리턴
+    array_creation_time, addition_time = add_arrays(N, gen_r_array_randint)
     return {
-        "array_creation_time": array_end_time - array_start_time, 
-        "execution_time": add_end_time - add_start_time
+        "array_creation_time": array_creation_time,
+        "addition_time": addition_time
         }
 
 
 @app.get("/add-large-arrays-choices")
 def add_large_arrays_choices():
     N = 10**6  # 100만 개 요소
-    # 배열열 실행 시간 측정 시작
-    array_start_time = time.time()
+    array_creation_time, addition_time = add_arrays(N, gen_r_array_choices)
+    return {
+        "array_creation_time": array_creation_time,
+        "addition_time": addition_time
+        }
     
+# TODO - 고차 함수 이용하기 
+
+def gen_r_array_randint(N):
+    a = [random.randint(0, 100) for _ in range(N)]
+    b = [random.randint(0, 100) for _ in range(N)]
+    return a,b
+
+def gen_r_array_choices(N):
+    a = random.choices(range(101), k=N)
+    b = random.choices(range(101), k=N)
+    return a,b
+
+def add_arrays(N, fun):
     # 랜덤한 1차원 배열 2개 생성
-    # random.choice 로 바꿔서 속도 비교
-    array1 = random.choices(range(101), k=N)
-    array2 = random.choices(range(101), k=N)
+    start_creation_time = time.time()
+    a, b = fun(N)
+    end_creation_time = time.time()
     
-    # 배열 실행 시간 측정 종료료
-    array_end_time = time.time()
-    
-    # 연산 실행 시간 측정 시작
+    # 실행 시간 측정 시작
     add_start_time = time.time()
-    
     # 요소별 덧셈
     result = []
-    for i in range(N):
-        result.append(array1[i] + array2[i])
-    #result = array1 + array2
-
-    # 연산 실행 시간 측정 종료
+    for x, y in zip(a, b):
+        result.append(x + y)
+     
+    # 실행 시간 측정 종료
     add_end_time = time.time()
     
     # 수행 시간 리턴
-    return {
-        "array_creation_time": array_end_time - array_start_time, 
-        "execution_time": add_end_time - add_start_time
-        }
+    # 리턴값: 배열 생성 시간(array_creation_time)과 덧셈 수행(addition_time) 시간을 각각 리턴
+    array_creation_time = end_creation_time - start_creation_time
+    addition_time = add_end_time - add_start_time
+    return array_creation_time, addition_time
+
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
