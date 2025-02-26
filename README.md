@@ -22,6 +22,10 @@ $ sudo service nginx start
 $ sudo service nginx status #-> worker 10ea 
 $ sudo nginx -t # syntax check
 ```
+```bash
+$ sudo docker exec -it <LB_NAME> bash
+$ nginx -s reload
+```
 
 ## nGrinder
 - http://localhost:8080/ (admin/admin)
@@ -57,15 +61,24 @@ $ sudo docker compose stats # 성능 모니터링
 ```
 
 ## scale out
-$ sudo docker compose up -d --scale web1=n
-
-## nginx
 ```bash
-$ sudo docker exec -it <LB_NAME> bash
-$ nginx -s reload
+$ sudo docker compose up -d --scale web1=n
 ```
 
 ## FastAPI
 ```bash
 $ fastapi dev main.py
+```
+
+## PDM to requirements.txt
+```bash
+$ pdm export -o requirements.txt --without-haches
+```
+
+## Docker build & push & pull run
+```bash
+$ sudo docker build -t jiwon1118/api:6.1.0 -f docker/fastapi/Dockerfile .
+$ sudo docker login
+$ sudo docker push jiwon1118/api:6.1.0
+$ sudo docker run -d --name api610 -p 8610:80 jiwon1118/api:6.1.0
 ```

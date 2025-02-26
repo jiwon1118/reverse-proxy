@@ -1,5 +1,4 @@
 from typing import Union
-
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -50,10 +49,12 @@ import random
 import time
 #import numpy as np
 
+# 상수
+N = 10**4  # 1만 개 요소
+
 @app.get("/add-large-arrays")
 # 문제 3
 def add_large_arrays():
-    N = 10**6  # 100만 개 요소
     array_creation_time, addition_time = add_arrays(N, gen_r_array_randint)
     return {
         "array_creation_time": array_creation_time,
@@ -63,7 +64,6 @@ def add_large_arrays():
 
 @app.get("/add-large-arrays-choices")
 def add_large_arrays_choices():
-    N = 10**6  # 100만 개 요소
     array_creation_time, addition_time = add_arrays(N, gen_r_array_choices)
     return {
         "array_creation_time": array_creation_time,
