@@ -47,43 +47,64 @@ def two_dimensional_array():
 
 import random
 import time
-#import numpy as np
+import numpy as np
 
 # 상수
 N = 10**4  # 1만 개 요소
 
-@app.get("/add-large-arrays")
+@app.get("/add-count-large-arrays-python")
 # 문제 3
-def add_large_arrays():
-    array_creation_time, addition_time = add_arrays(N, gen_r_array_randint)
-    return {
-        "array_creation_time": array_creation_time,
-        "addition_time": addition_time
-        }
+def add_large_arrays_python():
+    start_creation_time = time.time()
+    a, b = gen_r_array_choices(N)
+    end_creation_time = time.time()
 
+    add_start_time = time.time()
+    plus_py(a,b)
+    add_end_time = time.time()
+    
+    array_creation_time = end_creation_time - start_creation_time
+    addition_time = add_end_time - add_start_time
+    return array_creation_time, addition_time
 
-@app.get("/add-large-arrays-choices")
-def add_large_arrays_choices():
-    array_creation_time, addition_time = add_arrays(N, gen_r_array_choices)
-    return {
-        "array_creation_time": array_creation_time,
-        "addition_time": addition_time
-        }
+@app.get("/add-count-large-arrays-numpy")
+def add_large_arrays_numpy():
+    start_creation_time = time.time()
+    a, b = gen_r_array_numpy(N)
+    end_creation_time = time.time()
+    
+    add_start_time = time.time()
+    plus_numpy(a,b)
+    add_end_time = time.time()
+    
+    array_creation_time = end_creation_time - start_creation_time
+    addition_time = add_end_time - add_start_time
+    return array_creation_time, addition_time
     
 # TODO - 고차 함수 이용하기 
-
-def gen_r_array_randint(N):
-    a = [random.randint(0, 100) for _ in range(N)]
-    b = [random.randint(0, 100) for _ in range(N)]
-    return a,b
 
 def gen_r_array_choices(N):
     a = random.choices(range(101), k=N)
     b = random.choices(range(101), k=N)
+    return a, b
+
+def gen_r_array_numpy(N):
+    a = np.random.randint(1, 101, size=N)  # 1 이상 100 이하의 정수
+    b = np.random.randint(1, 101, size=N)
     return a,b
 
-def add_arrays(N, fun):
-    # 랜덤한 1차원 배열 2개 생성
+def plus_py(a, b):
+    result = []
+    for x, y in zip(a, b):
+        result.append(x + y)
+    return result
+
+def plus_numpy(a, b):
+    return a + b
+
+
+#def add_arrays(N, fun):
+    # 랜덤한 1차원 배열 2개 생성성
     start_creation_time = time.time()
     a, b = fun(N)
     end_creation_time = time.time()
